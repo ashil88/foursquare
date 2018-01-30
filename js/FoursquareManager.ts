@@ -30,6 +30,7 @@ class FoursquareManager {
     }
 
     private submitForm() {
+        // set input value as 'near' key value for api query
         this.foursquareApiParams['near'] = this.foursquareSearchInput.val();
 
         // query api
@@ -37,6 +38,7 @@ class FoursquareManager {
     }
 
     private getPlacesFromResource(params?: object) {
+        // ajax call to foursquare api
         $.ajax({
             url: 'https://api.foursquare.com/v2/venues/explore',
             timeout: 2000,
@@ -54,21 +56,24 @@ class FoursquareManager {
         let venuesHTML = ``,
             {response : {groups : [{items : recommendedPlaces}]}} = data;
 
+        // return the html markup for each venue
         recommendedPlaces.forEach((venue) => {
             venuesHTML += FoursquareManager.getVenueHtml(venue);
         });
 
+        // append the markup
         this.venuesWrapper.append(venuesHTML);
     }
 
     private placesResourceComplete(data, textStatus) {
+        // display an error if api response is not 'success'
         if (textStatus != 'success') {
             this.venuesWrapper.append(this.foursquareApiError);
         }
     }
 
     private resetVenues() {
-        // remove existing places before repopulating
+        // remove existing venues before repopulating
         this.venuesWrapper.empty();
     }
 

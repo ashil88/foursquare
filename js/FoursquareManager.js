@@ -17,11 +17,13 @@ var FoursquareManager = /** @class */ (function () {
         });
     }
     FoursquareManager.prototype.submitForm = function () {
+        // set input value as 'near' key value for api query
         this.foursquareApiParams['near'] = this.foursquareSearchInput.val();
         // query api
         this.getPlacesFromResource(this.foursquareApiParams);
     };
     FoursquareManager.prototype.getPlacesFromResource = function (params) {
+        // ajax call to foursquare api
         $.ajax({
             url: 'https://api.foursquare.com/v2/venues/explore',
             timeout: 2000,
@@ -36,18 +38,21 @@ var FoursquareManager = /** @class */ (function () {
     };
     FoursquareManager.prototype.placesResourceSuccess = function (data) {
         var venuesHTML = "", recommendedPlaces = data.response.groups[0].items;
+        // return the html markup for each venue
         recommendedPlaces.forEach(function (venue) {
             venuesHTML += FoursquareManager.getVenueHtml(venue);
         });
+        // append the markup
         this.venuesWrapper.append(venuesHTML);
     };
     FoursquareManager.prototype.placesResourceComplete = function (data, textStatus) {
+        // display an error if api response is not 'success'
         if (textStatus != 'success') {
             this.venuesWrapper.append(this.foursquareApiError);
         }
     };
     FoursquareManager.prototype.resetVenues = function () {
-        // remove existing places before repopulating
+        // remove existing venues before repopulating
         this.venuesWrapper.empty();
     };
     FoursquareManager.getVenueHtml = function (venue) {
