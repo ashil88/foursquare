@@ -2,6 +2,7 @@
 var FoursquareManager = /** @class */ (function () {
     function FoursquareManager(foursquareWrapper) {
         var _this = this;
+        this.foursquareApiError = "<div class=\"col-sm-12\">\n    <div class=\"alert alert-danger\" role=\"alert\">Oops! It looks like there's been an error. Please try searching a different name or place.</div>\n</div>";
         this.foursquareApiParams = { client_id: 'X4PBVD0T5QWQM2OCNLDHSAINWUMB5FGDQB0ATDI1FYLJARKB', client_secret: 'UYT4ODX1I1FBK24V5TXTFMSX4D0KUNCFTEJDQ00RU245HMZ2', limit: 15, v: '20180129' };
         this.foursquareFormWrapper = foursquareWrapper.find('.form-wrapper');
         this.foursquareSearchForm = this.foursquareFormWrapper.find('form');
@@ -28,8 +29,9 @@ var FoursquareManager = /** @class */ (function () {
             type: 'GET',
             data: params,
             context: this,
-            // beforeSend: this.resetVenues,
+            beforeSend: this.resetVenues,
             success: this.placesResourceSuccess,
+            complete: this.placesResourceComplete
         });
     };
     FoursquareManager.prototype.placesResourceSuccess = function (data) {
@@ -38,6 +40,15 @@ var FoursquareManager = /** @class */ (function () {
             venuesHTML += FoursquareManager.getVenueHtml(venue);
         });
         this.venuesWrapper.append(venuesHTML);
+    };
+    FoursquareManager.prototype.placesResourceComplete = function (data, textStatus) {
+        if (textStatus != 'success') {
+            this.venuesWrapper.append(this.foursquareApiError);
+        }
+    };
+    FoursquareManager.prototype.resetVenues = function () {
+        // remove existing places before repopulating
+        this.venuesWrapper.empty();
     };
     FoursquareManager.getVenueHtml = function (venue) {
         var venueHTML = "<div class=\"col-sm-4\">\n    <div class=\"card\">\n        <h5 class=\"card-header\">" + venue.venue.name + "</h5>\n        <div class=\"card-body\">\n            <p class=\"card-text\">" + venue.venue.location.formattedAddress + "</p>";

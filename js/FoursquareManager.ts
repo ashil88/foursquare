@@ -2,6 +2,7 @@
 
 class FoursquareManager {
 
+    private foursquareApiError: string;
     private foursquareApiParams: object;
     private foursquareFormWrapper: JQuery;
     private foursquareSearchForm: JQuery;
@@ -9,6 +10,9 @@ class FoursquareManager {
     private venuesWrapper: JQuery;
 
     constructor(foursquareWrapper: JQuery) {
+        this.foursquareApiError = `<div class="col-sm-12">
+    <div class="alert alert-danger" role="alert">Oops! It looks like there's been an error. Please try searching a different name or place.</div>
+</div>`;
         this.foursquareApiParams = {client_id: 'X4PBVD0T5QWQM2OCNLDHSAINWUMB5FGDQB0ATDI1FYLJARKB', client_secret: 'UYT4ODX1I1FBK24V5TXTFMSX4D0KUNCFTEJDQ00RU245HMZ2', limit: 15, v: '20180129'};
         this.foursquareFormWrapper = foursquareWrapper.find('.form-wrapper');
         this.foursquareSearchForm = this.foursquareFormWrapper.find('form');
@@ -40,9 +44,9 @@ class FoursquareManager {
             type: 'GET',
             data: params,
             context: this,
-            // beforeSend: this.resetVenues,
+            beforeSend: this.resetVenues,
             success: this.placesResourceSuccess,
-            // complete: this.placesResourceComplete
+            complete: this.placesResourceComplete
         });
     }
 
@@ -55,6 +59,17 @@ class FoursquareManager {
         });
 
         this.venuesWrapper.append(venuesHTML);
+    }
+
+    private placesResourceComplete(data, textStatus) {
+        if (textStatus != 'success') {
+            this.venuesWrapper.append(this.foursquareApiError);
+        }
+    }
+
+    private resetVenues() {
+        // remove existing places before repopulating
+        this.venuesWrapper.empty();
     }
 
     private static getVenueHtml(venue) {
