@@ -1,6 +1,7 @@
 /// <reference path="jquery.d.ts" />
 var FoursquareManager = /** @class */ (function () {
     function FoursquareManager(foursquareWrapper) {
+        this.venuesWrapper = foursquareWrapper.find('.venues-wrapper .row');
         this.getPlacesFromResource();
     }
     FoursquareManager.prototype.getPlacesFromResource = function (params) {
@@ -16,8 +17,18 @@ var FoursquareManager = /** @class */ (function () {
         });
     };
     FoursquareManager.prototype.placesResourceSuccess = function (data) {
-        var recommendedPlaces = data.response.groups[0].items;
-        console.log(recommendedPlaces);
+        var venuesHTML = "", recommendedPlaces = data.response.groups[0].items;
+        recommendedPlaces.forEach(function (venue) {
+            venuesHTML += FoursquareManager.getVenueHtml(venue);
+        });
+        this.venuesWrapper.append(venuesHTML);
+    };
+    FoursquareManager.getVenueHtml = function (venue) {
+        var venueHTML = "<div class=\"col-sm-4\">\n    <div class=\"card\">\n        <h5 class=\"card-header\">" + venue.venue.name + "</h5>\n        <div class=\"card-body\">\n            <p class=\"card-text\">" + venue.venue.location.formattedAddress + "</p>";
+        if (venue.tips)
+            venueHTML += "<blockquote class=\"blockquote text-muted\">" + venue.tips[0].text + "</blockquote>";
+        venueHTML += "<a href=\"#\" class=\"card-link\">Go somewhere</a>\n        </div>\n    </div>\n</div>\n";
+        return venueHTML;
     };
     return FoursquareManager;
 }());

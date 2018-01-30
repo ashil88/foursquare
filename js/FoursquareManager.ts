@@ -1,7 +1,11 @@
 /// <reference path="jquery.d.ts" />
 
 class FoursquareManager {
+
+    private venuesWrapper: JQuery;
+
     constructor(foursquareWrapper: JQuery) {
+        this.venuesWrapper = foursquareWrapper.find('.venues-wrapper .row');
 
         this.getPlacesFromResource();
     }
@@ -21,9 +25,31 @@ class FoursquareManager {
     }
 
     private placesResourceSuccess(data) {
-        let recommendedPlaces = data.response.groups[0].items;
+        let venuesHTML = ``,
+            {response : {groups : [{items : recommendedPlaces}]}} = data;
 
-        console.log(recommendedPlaces);
+        recommendedPlaces.forEach((venue) => {
+            venuesHTML += FoursquareManager.getVenueHtml(venue);
+        });
+
+        this.venuesWrapper.append(venuesHTML);
+    }
+
+    private static getVenueHtml(venue) {
+        let venueHTML = `<div class="col-sm-4">
+    <div class="card">
+        <h5 class="card-header">${venue.venue.name}</h5>
+        <div class="card-body">
+            <p class="card-text">${venue.venue.location.formattedAddress}</p>`;
+
+        if (venue.tips) venueHTML += `<blockquote class="blockquote text-muted">${venue.tips[0].text}</blockquote>`;
+
+        venueHTML += `<a href="#" class="card-link">Go somewhere</a>
+        </div>
+    </div>
+</div>
+`;
+        return venueHTML;
     }
 }
 
