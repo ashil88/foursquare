@@ -51,10 +51,13 @@ var FoursquareManager = /** @class */ (function () {
         this.venuesWrapper.empty();
     };
     FoursquareManager.getVenueHtml = function (venue) {
-        var venueHTML = "<div class=\"col-sm-4\">\n    <div class=\"card\">\n        <h5 class=\"card-header\">" + venue.venue.name + "</h5>\n        <div class=\"card-body\">\n            <p class=\"card-text\">" + venue.venue.location.formattedAddress + "</p>";
+        var categoryIcon = venue.venue.categories[0].icon.prefix + 'bg_32' + venue.venue.categories[0].icon.suffix;
+        var venueHTML = "<div class=\"col-sm-4\">\n    <div class=\"card\">\n        <h5 class=\"card-header\" style=\"background-image: url(" + categoryIcon + ");\">" + venue.venue.name + "</h5>\n        <div class=\"card-body\">\n            <p class=\"card-text\">" + venue.venue.location.formattedAddress + "</p>";
         if (venue.tips)
             venueHTML += "<blockquote class=\"blockquote text-muted\">" + venue.tips[0].text + "</blockquote>";
-        venueHTML += "<a href=\"#\" class=\"card-link\">Go somewhere</a>\n        </div>\n    </div>\n</div>\n";
+        if (venue.venue.url)
+            venueHTML += "<a href=\"" + venue.venue.url + "\" class=\"card-link\" target=\"_blank\">Find out more</a>";
+        venueHTML += "</div>\n    </div>\n</div>\n";
         return venueHTML;
     };
     return FoursquareManager;

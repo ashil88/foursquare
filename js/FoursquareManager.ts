@@ -73,16 +73,18 @@ class FoursquareManager {
     }
 
     private static getVenueHtml(venue) {
+        let categoryIcon = venue.venue.categories[0].icon.prefix + 'bg_32' + venue.venue.categories[0].icon.suffix;
+
         let venueHTML = `<div class="col-sm-4">
     <div class="card">
-        <h5 class="card-header">${venue.venue.name}</h5>
+        <h5 class="card-header" style="background-image: url(${categoryIcon});">${venue.venue.name}</h5>
         <div class="card-body">
             <p class="card-text">${venue.venue.location.formattedAddress}</p>`;
 
-        if (venue.tips) venueHTML += `<blockquote class="blockquote text-muted">${venue.tips[0].text}</blockquote>`;
+        if (venue.tips)         venueHTML += `<blockquote class="blockquote text-muted">${venue.tips[0].text}</blockquote>`;
+        if (venue.venue.url)    venueHTML +=`<a href="${venue.venue.url}" class="card-link" target="_blank">Find out more</a>`;
 
-        venueHTML += `<a href="#" class="card-link">Go somewhere</a>
-        </div>
+        venueHTML += `</div>
     </div>
 </div>
 `;
